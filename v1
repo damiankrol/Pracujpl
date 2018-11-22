@@ -1,0 +1,27 @@
+from requests import get
+from requests.exceptions import RequestException
+from contextlib import closing
+from bs4 import BeautifulSoup
+import requests
+import lxml
+
+URL_clean = 'https://pracuj.pl'
+URL = 'https://pracuj.pl/praca/poznan'
+source = requests.get(URL).text
+
+oferty = BeautifulSoup(source,'lxml')
+
+Oferta_numer = oferty.find('li',class_='o-list_item')
+Stanowisko = oferty.find('h2', class_='o-list_item_link')
+Lokalizacja = oferty.find('p',class_='o-list_item_desc clearfix')
+Data = Lokalizacja.find('span',class_='o-list_item_desc_date').text
+Numer_oferty =    Oferta_numer.find('span').attrs['data-id']
+LINK_Stanowisko = Stanowisko.find('a',class_='o-list_item_link_name')['href']
+Stanowisko = oferty.find('h2', class_='o-list_item_link').text
+
+latitude =  Lokalizacja.find('span',class_='o-list_item_desc_location_name latlng').attrs['data-lat']
+longitude = Lokalizacja.find('span',class_='o-list_item_desc_location_name latlng').attrs['data-lng']
+Adres =     Lokalizacja.find('span',class_='o-list_item_desc_location_name latlng').attrs['data-address']
+
+URL_Stanowisko = URL_clean+LINK_Stanowisko
+print(Stanowisko,Data, Adres ,Numer_oferty, latitude, longitude,URL_Stanowisko )
